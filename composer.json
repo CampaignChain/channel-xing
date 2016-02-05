@@ -1,0 +1,40 @@
+{
+    "name": "campaignchain/channel-xing",
+    "description": "Xing module for CampaignChain",
+    "keywords": ["campaignchain"],
+    "type": "campaignchain-channel",
+    "license": "Apache-2.0",
+    "homepage": "http://www.campaignchain.com",
+    "authors": [
+        {
+            "name": "CampaignChain, Inc.",
+            "email": "info@campaignchain.com"
+        }
+    ],
+    "support": {
+        "issues": "https://github.com/CampaignChain/campaignchain-ce/issues",
+        "docs": "http://doc.campaignchain.com"
+    },
+    "require": {
+        "campaignchain/core": "dev-master",
+        "campaignchain/security-authentication-client-oauth": "dev-master"
+    },
+    "autoload": {
+        "psr-4": { "CampaignChain\\Channel\\XingBundle\\": "" }
+    },
+    "extra": {
+        "campaignchain": {
+            "kernel": {
+                "classes": [
+                    "CampaignChain\\Channel\\XingBundle\\CampaignChainChannelXingBundle"
+                ],
+                "routing":
+                {
+                    "name": "campaignchain_channel_xing",
+                    "resource": "@CampaignChainChannelXingBundle/Resources/config/routing.yml",
+                    "prefix": "/"
+                }
+            }
+        }
+    }
+}

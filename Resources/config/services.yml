@@ -1,0 +1,8 @@
+services:
+#    campaign_chain_channel_xing.example:
+#        class: CampaignChain\Channel\XingBundle\Example
+#        arguments: [@service_id, "plain_value", %parameter%]
+    campaignchain.channel.xing.rest.client:
+        class: CampaignChain\Channel\XingBundle\REST\XingClient
+        calls:
+            - [setContainer, ["@service_container"]]

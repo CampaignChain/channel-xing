@@ -1,0 +1,9 @@
+
+modules:
+    campaignchain-xing:
+        display_name: Xing
+        description: This module connects to Xing
+        routes: 
+            new: campaignchain_channel_xing_create
+        hooks:
+            default:
