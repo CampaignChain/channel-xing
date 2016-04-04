@@ -8,9 +8,18 @@ file that was distributed with this source code.
 {% extends 'CampaignChainCoreBundle:Base:base.html.twig' %}
 
 {% block body %}
+    <script>
+        (function(d) {
+            var js, id='lwx';
+            if (d.getElementById(id)) return;
+            js = d.createElement('script'); js.id = id; js.src = "https://www.xing-share.com/plugins/login.js";
+            d.getElementsByTagName('head')[0].appendChild(js)
+        }(document));
+    </script>
+
      <div class="jumbotron">
          <p>Connect to a Xing account by logging in to Xing. The username and password will remain with Xing and will not be stored in this application.</p>
-         <p><a class="btn btn-primary btn-lg" role="button" onclick="popupwindow('{{ path('campaignchain_channel_xing_login') }}','',600,600);">Connect with Xing</a></p>
+         <p><a class="btn btn-primary btn-lg" role="button" onclick="xing.logout(function(response) {});popupwindow('{{ path('campaignchain_channel_xing_login') }}','',600,600);">Connect with Xing</a></p>
      </div>
 
  {% endblock %}

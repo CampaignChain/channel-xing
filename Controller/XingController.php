@@ -61,6 +61,7 @@ class XingController extends Controller
                 $location = new Location();
                 $location->setIdentifier($profile->identifier);
                 $location->setName($profile->displayName);
+                $location->setUrl($profile->profileURL);
                 $location->setImage($profile->photoURL);
                 $location->setLocationModule($locationModule);
                 $wizard->addLocation($location->getIdentifier(), $location);
