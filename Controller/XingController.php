@@ -100,7 +100,7 @@ class XingController extends Controller
         return $this->render(
             'CampaignChainChannelXingBundle:Create:login.html.twig',
             array(
-                'redirect' => $this->generateUrl('campaignchain_core_channel')
+                'redirect' => $this->generateUrl('campaignchain_core_location')
             )
         );
     }
