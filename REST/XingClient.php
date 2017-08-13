@@ -75,7 +75,7 @@ class XingClient
 
             return $this;
         } catch (\Exception $e) {
-            throw new ExternalApiException($e->getMessage(), $e->getCode());
+            throw new ExternalApiException($e->getMessage(), $e->getCode(), $e);
         }
     }
 
@@ -86,7 +86,7 @@ class XingClient
             $this->headers = $res->getHeaders();
             return json_decode($res->getBody(), true);
         } catch(\Exception $e){
-            throw new ExternalApiException($e->getMessage(), $e->getCode());
+            throw new ExternalApiException($e->getMessage(), $e->getCode(), $e);
         }
     }
 
