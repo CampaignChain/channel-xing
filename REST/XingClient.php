@@ -16,18 +16,22 @@
  */
 namespace CampaignChain\Channel\XingBundle\REST;
 
-use Symfony\Component\HttpFoundation\Session\Session;
-use Guzzle\Http\Client;
-use Guzzle\Plugin\Oauth\OauthPlugin;
+use CampaignChain\CoreBundle\Exception\ExternalApiException;
+use GuzzleHttp\Client;
+use GuzzleHttp\HandlerStack;
+use GuzzleHttp\Subscriber\Oauth\Oauth1;
 
 class XingClient
 {
     const RESOURCE_OWNER = 'Xing';
-    const BASE_URL   = 'https://api.xing.com/v1';
+    const BASE_URL   = 'https://api.xing.com/v1/';
 
     protected $container;
-    
+
+    /** @var  Client */
     protected $client;
+
+    protected $headers;
     
     public function setContainer($container)
     {
@@ -47,36 +51,64 @@ class XingClient
         return $this->connect($application->getKey(), $application->getSecret(), $token->getAccessToken(), $token->getTokenSecret());
     }
 
-    public function connect($appKey, $appSecret, $accessToken, $tokenSecret){
+    public function connect($appKey, $appSecret, $accessToken, $tokenSecret)
+    {
         try {
-            $client = new Client(self::BASE_URL.'/');
-            $oauth  = new OauthPlugin(array(
-                'consumer_key'    => $appKey,
-                'consumer_secret' => $appSecret,
-                'token'           => $accessToken,
-                'token_secret'    => $tokenSecret,
-            ));
-            return $client->addSubscriber($oauth);
+            $stack = HandlerStack::create();
+
+            $oauth = new Oauth1(
+                [
+                    'consumer_key'      => $appKey,
+                    'consumer_secret'   => $appSecret,
+                    'token'             => $accessToken,
+                    'token_secret'      => $tokenSecret,
+                ]
+            );
+
+            $stack->push($oauth);
+
+            $this->client = new Client([
+                'base_uri' => self::BASE_URL,
+                'handler' => $stack,
+                'auth' => 'oauth'
+            ]);
+
+            return $this;
+        } catch (\Exception $e) {
+            throw new ExternalApiException($e->getMessage(), $e->getCode());
         }
-        catch (ClientErrorResponseException $e) {
-            $request = $e->getRequest();
-            $response = $e->getResponse();
-            print_r($request);
-            print_r($response);
-        }
-        catch (ServerErrorResponseException $e) {
-            $request = $e->getRequest();
-            $response = $e->getResponse();
-            print_r($response);
-        }
-        catch (BadResponseException $e) {
-            $request = $e->getRequest();
-            $response = $e->getResponse();
-            print_r($response);
-        }
-        catch(Exception $e){
-          print_r($e->getMessage());
-        }  
     }
 
+    private function request($method, $uri, $body = array())
+    {
+        try {
+            $res = $this->client->request($method, $uri, $body);
+            $this->headers = $res->getHeaders();
+            return json_decode($res->getBody(), true);
+        } catch(\Exception $e){
+            throw new ExternalApiException($e->getMessage(), $e->getCode());
+        }
+    }
+
+    public function postStatusMessage($id, $msg)
+    {
+        $this->request(
+            'POST',
+            'users/' . $id . '/status_message',
+            array('query' => array('id' => $id, 'message' => $msg))
+        );
+
+        $messageEndpoint = $this->headers['Location'][0];
+        $messageId = basename($messageEndpoint);
+
+        $response['id'] = $messageId;
+        $response['url'] = 'https://www.xing.com/feedy/stories/' . strtok($messageId, '_');
+
+        return $response;
+    }
+
+    public function getStatusActivities($id)
+    {
+        return $this->request('GET', 'activities/' . $id);
+    }
 }
