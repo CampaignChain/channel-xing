@@ -1,8 +1,8 @@
 # Please add the routes for your module here
 campaignchain_channel_xing_create:
-    pattern: /channel/xing/create
+    path: /channel/xing/create
     defaults: { _controller: CampaignChainChannelXingBundle:Xing:create }
     
 campaignchain_channel_xing_login:
-    pattern:  /channel/xing/create/login
+    path:  /channel/xing/create/login
     defaults: { _controller: CampaignChainChannelXingBundle:Xing:login }
